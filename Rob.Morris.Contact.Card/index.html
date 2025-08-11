@@ -5,15 +5,19 @@
   <title>Save Rob Morris Contact</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>
-    // Put your RAW .vcf URL here (click "Raw" on your Gist and copy that URL)
-    const VCF_RAW_URL = "https://gist.githubusercontent.com/USERNAME/HASH/raw/Rob.Morris.Contact.Card.vcf";
+    const VCF_RAW_URL = "https://gist.githubusercontent.com/RamForceGlobal/8f6ddcfd3811bf5c9e7f28b1ab39d8f7/raw/0d74ae846beffad04c930930552df566575a5ad3/rob.morris.ramforceglobal.vcf";
     const FILENAME = "Rob.Morris.Contact.Card.vcf";
 
     async function downloadVCard() {
       try {
-        const res = await fetch(VCF_RAW_URL, {cache: "no-store"});
+        const res = await fetch(VCF_RAW_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
         const text = await res.text();
-        const blob = new Blob([text], { type: "text/vcard;charset=utf-8" }); // aka text/x-vcard
+
+        // Avoid downloading a 404 page as the vCard
+        if (/404 Not Found/i.test(text)) throw new Error("404 body");
+
+        const blob = new Blob([text], { type: "text/vcard;charset=utf-8" });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement("a");
@@ -27,7 +31,9 @@
           a.remove();
         }, 1500);
       } catch (e) {
+        const msg = document.getElementById("msg");
         const link = document.getElementById("fallback");
+        msg.textContent = "Couldn’t auto-download. Tap to get the contact card.";
         link.href = VCF_RAW_URL;
         link.style.display = "inline-block";
       }
@@ -41,7 +47,7 @@
   </style>
 </head>
 <body>
-  <p>Preparing your contact card…</p>
+  <p id="msg">Preparing your contact card…</p>
   <a id="fallback" class="btn" style="display:none">Download contact card</a>
 </body>
 </html>
