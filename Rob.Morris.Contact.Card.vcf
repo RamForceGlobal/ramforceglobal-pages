@@ -1,0 +1,12 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Morris;Jacob Robert;;;
+FN:Rob Morris
+ORG:Ram Force Global Inc.
+TITLE:Chief Technology Officer
+TEL;TYPE=WORK,VOICE:+1-000-000-0000
+EMAIL;TYPE=WORK:your.email@ramforceglobal.com
+URL:https://ramforceglobal.com
+ADR;TYPE=WORK:;;5195 Marblewood Drive;Mississauga;ON;;Canada
+NOTE:Ram Force Global – International sourcing & management
+END:VCARD
