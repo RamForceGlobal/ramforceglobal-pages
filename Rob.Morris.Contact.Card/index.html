@@ -1,36 +1,52 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>Save Rob Morris Contact</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
-    const VCF_URL = "Rob.Morris.Contact.Card.vcf"; // same folder as index.html
+    // If you used Option A (vcf in same folder), use a relative path:
+    const VCF_URL = "Rob.Morris.Contact.Card.vcf"; 
+    // If you're pulling from Gist stable-raw, use that URL instead:
+    // const VCF_URL = "https://gist.githubusercontent.com/RamForceGlobal/8f6ddcfd3811bf5c9e7f28b1ab39d8f7/raw/rob.morris.ramforceglobal.vcf";
+
     const FILENAME = "Rob.Morris.Contact.Card.vcf";
-    async function downloadVCard() {
+
+    async function run() {
       try {
         const res = await fetch(VCF_URL, { cache: "no-store" });
         if (!res.ok) throw new Error("HTTP " + res.status);
         const text = await res.text();
         if (!/^BEGIN:VCARD/m.test(text)) throw new Error("Not a vCard");
+
+        // Make a vCard Blob and try to OPEN it (not download) so OS handles it
         const blob = new Blob([text], { type: "text/vcard;charset=utf-8" });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url; a.download = FILENAME; document.body.appendChild(a); a.click();
-        setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },1500);
+
+        // First try: navigate to the Blob (often opens Contacts on Android/iOS)
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        // Try inline open in a new tab (some browsers require a user gesture; we simulate by immediate open)
+        const opened = window.open(url, "_blank");
+        if (!opened) {
+          // If blocked, try same-tab navigation
+          window.location.assign(url);
+        }
+
+        // Safety fallback after 2s: offer a download button
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          document.getElementById("fallback").href = VCF_URL;
+          document.getElementById("fallback").style.display = "inline-block";
+          document.getElementById("msg").textContent = "If it didn't open, tap to download the contact card.";
+        }, 2000);
+
       } catch (e) {
-        const msg = document.getElementById("msg");
-        const link = document.getElementById("fallback");
-        msg.textContent = "Couldn’t auto-download. Tap to get the contact card.";
-        link.href = VCF_URL; link.style.display = "inline-block";
+        document.getElementById("fallback").href = VCF_URL;
+        document.getElementById("fallback").style.display = "inline-block";
+        document.getElementById("msg").textContent = "Couldn’t open automatically. Tap to download the contact card.";
       }
     }
-    window.addEventListener("DOMContentLoaded", downloadVCard);
-  </script>
-  <style>body{font-family:system-ui,sans-serif;margin:2rem}.btn{padding:.75rem 1rem;border:1px solid #ccc;border-radius:.5rem;text-decoration:none}</style>
-</head>
-<body>
-  <p id="msg">Preparing your contact card…</p>
-  <a id="fallback" class="btn" style="display:none">Download contact card</a>
-</body>
-</html>
+
+    window.addEventListener("DOMContentLoaded
