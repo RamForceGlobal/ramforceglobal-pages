@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Save Paul Nanuwa Contact</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>
+const VCF_URL = "Paul.Nanuwa.Kiki.Momo.Contact.Card.vcf"; // same folder
+
+async function run() {
+  try {
+    const res = await fetch(VCF_URL, {cache:"no-store"});
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const text = await res.text();
+    if (!/^BEGIN:VCARD/m.test(text)) throw new Error("Not a vCard");
+
+    // Try inline open; Android may still download first
+    const blob = new Blob([text], {type:"text/vcard;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    window.location.replace(url);
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      document.getElementById("msg").innerHTML =
+        'If it didn’t open, <a href="'+VCF_URL+'">tap here to download</a>, then tap <b>Open</b> to add the contact.';
+    }, 2000);
+
+  } catch (e) {
+    document.getElementById("msg").innerHTML =
+      'Couldn’t open automatically. <a href="'+VCF_URL+'">Tap here to download</a>, then tap <b>Open</b>.';
+  }
+}
+document.addEventListener("DOMContentLoaded", run);
+</script>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:2rem;line-height:1.5}
+  a{color:inherit}
+</style>
+</head>
+<body>
+<p id="msg">Opening Paul’s contact card…</p>
+</body>
+</html>
