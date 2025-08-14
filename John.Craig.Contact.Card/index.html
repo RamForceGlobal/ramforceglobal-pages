@@ -1,31 +1,24 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <title>Save John Craig Contact</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
-const VCF_URL = "John.Craig.Contact.Card.vcf";         // same folder
-const FILENAME = "John.Craig.Contact.Card.vcf";         // desired filename
-
+const VCF_URL = "John.Craig.Contact.Card.vcf";
+const FILENAME = "John.Craig.Contact.Card.vcf";
 async function run() {
   try {
     const res = await fetch(VCF_URL, { cache: "no-store" });
     if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
     if (!/^BEGIN:VCARD/m.test(text)) throw new Error("Not a vCard");
-
-    // Force correct filename via <a download="...">
     const blob = new Blob([text], { type: "text/vcard;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = FILENAME;   // sets the filename (prevents random UUID names)
-    document.body.appendChild(a);
-    a.click();
+    a.href = url; a.download = FILENAME;
+    document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1500);
-
-    // Helpful message for Android users (Pixel etc.)
     document.getElementById("msg").textContent =
       "Download started. Tap Open to add the contact.";
   } catch (e) {
@@ -36,11 +29,17 @@ async function run() {
 document.addEventListener("DOMContentLoaded", run);
 </script>
 <style>
-  body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:2rem;line-height:1.5}
-  a{color:inherit}
+:root{color-scheme:light dark}
+body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:2rem;line-height:1.5;text-align:center}
+.logo-wrap{display:flex;justify-content:center;margin:0 auto 1.25rem}
+.logo{max-width:280px;width:80%;height:auto;border-radius:10px}
+a{color:inherit;text-decoration:underline}
 </style>
 </head>
 <body>
-  <p id="msg">Preparing John’s contact card…</p>
+<div class="logo-wrap">
+  <img src="../images/RAM%20FORCE%20GLOBAL%20BLACK%20VERTICAL.png" alt="Ram Force Global" class="logo">
+</div>
+<p id="msg">Preparing the contact card…</p>
 </body>
 </html>
