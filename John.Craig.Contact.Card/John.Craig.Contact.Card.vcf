@@ -1,0 +1,10 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Craig;John;;;
+FN:John Craig
+ORG:Ram Force Global Corporation
+TITLE:Chief Operating Officer
+TEL;TYPE=WORK,VOICE:+1-416-543-9732
+EMAIL;TYPE=WORK:john.craig@ramforceglobal.com
+URL:https://ramforceglobal.com
+END:VCARD
