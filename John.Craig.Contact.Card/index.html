@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Save John Craig Contact</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>
+const VCF_URL = "John.Craig.Contact.Card.vcf";         // same folder
+const FILENAME = "John.Craig.Contact.Card.vcf";         // desired filename
+
+async function run() {
+  try {
+    const res = await fetch(VCF_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const text = await res.text();
+    if (!/^BEGIN:VCARD/m.test(text)) throw new Error("Not a vCard");
+
+    // Force correct filename via <a download="...">
+    const blob = new Blob([text], { type: "text/vcard;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = FILENAME;   // sets the filename (prevents random UUID names)
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1500);
+
+    // Helpful message for Android users (Pixel etc.)
+    document.getElementById("msg").textContent =
+      "Download started. Tap Open to add the contact.";
+  } catch (e) {
+    document.getElementById("msg").innerHTML =
+      `Couldn’t start automatically. <a href="${VCF_URL}">Tap here to download</a>.`;
+  }
+}
+document.addEventListener("DOMContentLoaded", run);
+</script>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:2rem;line-height:1.5}
+  a{color:inherit}
+</style>
+</head>
+<body>
+  <p id="msg">Preparing John’s contact card…</p>
+</body>
+</html>
