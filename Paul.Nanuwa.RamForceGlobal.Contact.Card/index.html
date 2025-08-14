@@ -1,10 +1,11 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Save Paul Nanuwa Contact</title>
+<title>Save Paul Nanuwa (Ram Force Global)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
+const CONTACT_NAME = "Paul Nanuwa – Ram Force Global";
 const VCF_URL = "Paul.Nanuwa.RamForceGlobal.Contact.Card.vcf";
 const FILENAME = "Paul.Nanuwa.RamForceGlobal.Contact.Card.vcf";
 
@@ -15,31 +16,34 @@ async function run() {
     const text = await res.text();
     if (!/^BEGIN:VCARD/m.test(text)) throw new Error("Not a vCard");
 
-    // Force download with correct filename
     const blob = new Blob([text], { type: "text/vcard;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = FILENAME;
-    document.body.appendChild(a);
-    a.click();
+    a.href = url; a.download = FILENAME;
+    document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1500);
 
     document.getElementById("msg").textContent =
-      "Download started. Tap Open to add the contact.";
+      `Download of ${CONTACT_NAME} started. Tap Open to add the contact.`;
   } catch (e) {
     document.getElementById("msg").innerHTML =
-      `Couldn’t start automatically. <a href="${VCF_URL}">Tap here to download</a>.`;
+      `Couldn’t start automatically. <a href="${VCF_URL}">Tap here to download ${CONTACT_NAME}</a>.`;
   }
 }
 document.addEventListener("DOMContentLoaded", run);
 </script>
 <style>
-  body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:2rem;line-height:1.5}
-  a{color:inherit}
+:root{color-scheme:light dark}
+body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:2rem;line-height:1.5;text-align:center}
+.logo-wrap{display:flex;justify-content:center;margin:0 auto 1.25rem}
+.logo{max-width:280px;width:80%;height:auto;border-radius:10px}
+a{color:inherit;text-decoration:underline}
 </style>
 </head>
 <body>
-  <p id="msg">Preparing Paul’s contact card…</p>
+<div class="logo-wrap">
+  <img src="../images/RAM%20FORCE%20GLOBAL%20BLACK%20VERTICAL.png" alt="Ram Force Global" class="logo">
+</div>
+<p id="msg">Preparing the contact card…</p>
 </body>
 </html>
